@@ -1,0 +1,12 @@
+{
+  "name": "MusicBrainz/AcoustID integration",
+  "version": "1.0",
+  "description": "Display AcoustID data on MusicBrainz",
+  "content_scripts": [
+    {
+      "matches": ["http://musicbrainz.org/recording/*/puids"],
+      "js": ["content.js"]
+    }
+  ]
+}
+
