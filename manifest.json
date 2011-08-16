@@ -4,7 +4,10 @@
   "description": "Display AcoustID data on MusicBrainz",
   "content_scripts": [
     {
-      "matches": ["http://musicbrainz.org/recording/*/puids"],
+      "matches": [
+		"http://musicbrainz.org/recording/*/puids",
+		"http://musicbrainz.org/puid/*"
+	  ],
       "js": ["content.js"]
     }
   ]
