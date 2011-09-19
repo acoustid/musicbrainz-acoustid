@@ -7,25 +7,38 @@
 
 function injected() {
 
-	function buildAcoustidTable(tracks) {
-		var tbl = $('<table class="tbl"><thead><tr><th>AcoustID</th></tr></thead><tbody></tbody></table>');
+	function buildAcoustidTable(tracks, mbid) {
+		var tbl = $('<table class="tbl"><thead><tr><th>AcoustID</th><th style="width:5em;">Actions</th></tr></thead><tbody></tbody></table>');
 		for (var i = 0; i < tracks.length; i++) {
-			var row = $('<tr><td><code><a></a></code></td></tr>');
-			var link = row.find('a');
+			var row = $('<tr><td><code><a></a></code></td><td><a></a></td></tr>');
+            if (i % 2 == 1) {
+			    row.addClass('ev');
+            }
+            if (tracks[i].disabled) {
+                row.find('a').first()
+                    .css('text-decoration', 'line-through')
+                    .css('opacity', '0.5');
+            }
+			var link = row.find('a').first();
 			link.attr('href', 'http://acoustid.org/track/' + tracks[i].id);
 			link.text(tracks[i].id);
+            if (mbid) {
+			    link = row.find('a').last();
+    			link.attr('href', 'http://acoustid.org/edit/toggle-track-mbid?track_gid=' + tracks[i].id + '&mbid=' + mbid + '&state=' + (tracks[i].disabled ? '0' : '1'));
+			    link.text(tracks[i].disabled ? 'Link' : 'Unlink');
+            }
 			tbl.find('tbody').append(row);
 		}
 		return tbl;
 	}
 
 	function updateRecordingPUIDsPage(mbid) {
-		$.getJSON("http://api.acoustid.org/v2/track/list_by_mbid?format=jsonp&jsoncallback=?",
+		$.getJSON("http://api.acoustid.org/v2/track/list_by_mbid?format=jsonp&disabled=1&jsoncallback=?",
 			{ 'mbid': mbid },
 			function(json) {
-				$('#content').append('<h2>Associated AcoustID tracks</h2>');
+				$('#content').append('<h2>Associated AcoustIDs</h2>');
 				if (json.tracks.length) {
-					$('#content').append(buildAcoustidTable(json.tracks));
+					$('#content').append(buildAcoustidTable(json.tracks, mbid));
 				}
 				else {
 					$('#content').append('<p>This recording does not have any associated AcoustID tracks</p>');
@@ -38,7 +51,7 @@ function injected() {
 		$.getJSON("http://api.acoustid.org/v2/track/list_by_puid?format=jsonp&jsoncallback=?",
 			{ 'puid': puid },
 			function(json) {
-				$('#page').append('<h2>Associated with AcoustID tracks</h2>');
+				$('#page').append('<h2>Associated with AcoustIDs</h2>');
 				if (json.tracks.length) {
 					$('#page').append(buildAcoustidTable(json.tracks));
 				}
