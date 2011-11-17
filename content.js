@@ -6,7 +6,7 @@
 // ==/UserScript==
 //
 // Move these above if you want AcoustID icons in recording lists
-// @include       http://musicbrainz.org/artist/*/recordings
+// @include       http://musicbrainz.org/artist/*/recordings*
 // @include       http://musicbrainz.org/release/*
 
 function injected() {
@@ -88,7 +88,7 @@ function injected() {
 					has_acoustids[json.mbids[i].mbid] = json.mbids[i].tracks.length > 0;
 				}
 				$('.tbl tr td:nth-child(2)').each(function(i, td) {
-					var mbid = $(td).children('a').get(0).href.split('/')[4];
+					var mbid = $(td).children('a').attr('href').split('/')[4];
 					if (has_acoustids[mbid]) {
 						var a = $('<a href="#"><img src="http://acoustid.org/static/acoustid-wave-12.png" alt="AcoustID" /></a>');
 						a.attr('href', 'http://musicbrainz.org/recording/' + mbid + '/puids');
@@ -99,6 +99,8 @@ function injected() {
 			}
 		});
 	}
+
+	console.log('hello');
 
 	var match = window.location.href.match(/recording\/([A-Fa-f0-9-]+)\/puids/);
 	if (match) {

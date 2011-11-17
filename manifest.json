@@ -7,7 +7,7 @@
       "matches": [
 		"http://musicbrainz.org/recording/*/puids",
 		"http://musicbrainz.org/puid/*",
-		"http://musicbrainz.org/artist/*/recordings",
+		"http://musicbrainz.org/artist/*/recordings*",
 		"http://musicbrainz.org/release/*"
 	  ],
       "js": ["content.js"]
