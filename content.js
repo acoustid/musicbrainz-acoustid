@@ -4,6 +4,10 @@
 // @include       http://musicbrainz.org/recording/*/puids
 // @include       http://musicbrainz.org/puid/*
 // ==/UserScript==
+//
+// Move these above if you want AcoustID icons in recording lists
+// @include       http://musicbrainz.org/artist/*/recordings
+// @include       http://musicbrainz.org/release/*
 
 function injected() {
 
@@ -62,6 +66,40 @@ function injected() {
 		);
 	}
 
+	function updateArtistRecordingsPage() {
+		var mbids = [];
+		$('.tbl tr td:nth-child(2) a').each(function(i, link) {
+			var parts = link.href.split('/');
+			if (parts[3] == 'recording') {
+				mbids.push(parts[4]);
+			}
+		});
+		if (mbids.length == 0) {
+			return;
+		}
+		$.ajax({
+			url: "http://api.acoustid.org/v2/track/list_by_mbid?format=jsonp&batch=1&jsoncallback=?",
+			dataType: 'json',
+			data: { 'mbid': mbids },
+			traditional: true,
+			success: function(json) {
+				var has_acoustids = {};
+				for (var i = 0; i < json.mbids.length; i++) {
+					has_acoustids[json.mbids[i].mbid] = json.mbids[i].tracks.length > 0;
+				}
+				$('.tbl tr td:nth-child(2)').each(function(i, td) {
+					var mbid = $(td).children('a').get(0).href.split('/')[4];
+					if (has_acoustids[mbid]) {
+						var a = $('<a href="#"><img src="http://acoustid.org/static/acoustid-wave-12.png" alt="AcoustID" /></a>');
+						a.attr('href', 'http://musicbrainz.org/recording/' + mbid + '/puids');
+						a.css({'float': 'right'});
+						$(td).append(a);
+					}
+				});
+			}
+		});
+	}
+
 	var match = window.location.href.match(/recording\/([A-Fa-f0-9-]+)\/puids/);
 	if (match) {
 		updateRecordingPUIDsPage(match[1]);
@@ -70,6 +108,18 @@ function injected() {
 		var match = window.location.href.match(/puid\/([A-Fa-f0-9-]+)/);
 		if (match) {
 			updatePUIDPage(match[1]);
+		}
+		else {
+			var match = window.location.href.match(/artist\/[A-Fa-f0-9-]+\/recordings/);
+			if (match) {
+				updateArtistRecordingsPage();
+			}
+			else {
+				var match = window.location.href.match(/release\/[A-Fa-f0-9-]+/);
+				if (match) {
+					updateArtistRecordingsPage(); // works on the release page too
+				}
+			}
 		}
 	}
 
