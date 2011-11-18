@@ -66,12 +66,21 @@ function injected() {
 		);
 	}
 
+	function extractRecordingMBID(link) {
+		if (link !== undefined) {
+			var parts = link.href.split('/');
+			if (parts[3] == 'recording') {
+				return parts[4];
+			}
+		}
+	}
+
 	function updateArtistRecordingsPage() {
 		var mbids = [];
 		$('.tbl tr td:nth-child(2) a').each(function(i, link) {
-			var parts = link.href.split('/');
-			if (parts[3] == 'recording') {
-				mbids.push(parts[4]);
+			var mbid = extractRecordingMBID(link);
+			if (mbid !== undefined) {
+				mbids.push(mbid);
 			}
 		});
 		if (mbids.length == 0) {
@@ -88,7 +97,10 @@ function injected() {
 					has_acoustids[json.mbids[i].mbid] = json.mbids[i].tracks.length > 0;
 				}
 				$('.tbl tr td:nth-child(2)').each(function(i, td) {
-					var mbid = $(td).children('a').attr('href').split('/')[4];
+					var mbid = extractRecordingMBID($(td).find('a').get(0));
+					if (mbid === undefined) {
+						return
+					}
 					if (has_acoustids[mbid]) {
 						var a = $('<a href="#"><img src="http://acoustid.org/static/acoustid-wave-12.png" alt="AcoustID" /></a>');
 						a.attr('href', 'http://musicbrainz.org/recording/' + mbid + '/puids');
@@ -99,8 +111,6 @@ function injected() {
 			}
 		});
 	}
-
-	console.log('hello');
 
 	var match = window.location.href.match(/recording\/([A-Fa-f0-9-]+)\/puids/);
 	if (match) {
