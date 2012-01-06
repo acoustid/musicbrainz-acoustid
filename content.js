@@ -3,11 +3,9 @@
 // @description   Display AcoustID data on MusicBrainz
 // @include       http://musicbrainz.org/recording/*/puids
 // @include       http://musicbrainz.org/puid/*
-// ==/UserScript==
-//
-// Move these above if you want AcoustID icons in recording lists
 // @include       http://musicbrainz.org/artist/*/recordings*
 // @include       http://musicbrainz.org/release/*
+// ==/UserScript==
 
 function injected() {
 
@@ -131,9 +129,9 @@ function injected() {
 				}
 				if (has_acoustids[mbid]) {
 					var a = $('<a href="#"><img src="http://acoustid.org/static/acoustid-wave-12.png" alt="AcoustID" /></a>');
-					a.attr('href', 'http://musicbrainz.org/recording/' + mbid + '/puids');
+					a.find('a').attr('href', 'http://musicbrainz.org/recording/' + mbid + '/puids');
 					a.css({'float': 'right'});
-					$(td).append(a);
+					$(td).find('a:first').after(a);
 				}
 			});
 		});
