@@ -1,10 +1,12 @@
 // ==UserScript==
-// @name          MusicBrainz/AcoustID integration
-// @description   Display AcoustID data on MusicBrainz
-// @include       http://musicbrainz.org/recording/*/puids
+// @name          Extra MusicBrainz/AcoustID integration
+// @description   Display additional AcoustID data on MusicBrainz
 // @include       http://musicbrainz.org/puid/*
 // @include       http://musicbrainz.org/artist/*/recordings*
 // @include       http://musicbrainz.org/release/*
+// @include       http://beta.musicbrainz.org/puid/*
+// @include       http://beta.musicbrainz.org/artist/*/recordings*
+// @include       http://beta.musicbrainz.org/release/*
 // ==/UserScript==
 
 function injected() {
@@ -32,21 +34,6 @@ function injected() {
 			tbl.find('tbody').append(row);
 		}
 		return tbl;
-	}
-
-	function updateRecordingPUIDsPage(mbid) {
-		$.getJSON("http://api.acoustid.org/v2/track/list_by_mbid?format=jsonp&disabled=1&jsoncallback=?",
-			{ 'mbid': mbid },
-			function(json) {
-				$('#content').append('<h2>Associated AcoustIDs</h2>');
-				if (json.tracks.length) {
-					$('#content').append(buildAcoustidTable(json.tracks, mbid));
-				}
-				else {
-					$('#content').append('<p>This recording does not have any associated AcoustID tracks</p>');
-				}
-			}
-		);
 	}
 
 	function updatePUIDPage(puid) {
@@ -137,25 +124,19 @@ function injected() {
 		});
 	}
 
-	var match = window.location.href.match(/recording\/([A-Fa-f0-9-]+)\/puids/);
+	var match = window.location.href.match(/puid\/([A-Fa-f0-9-]+)/);
 	if (match) {
-		updateRecordingPUIDsPage(match[1]);
+		updatePUIDPage(match[1]);
 	}
 	else {
-		var match = window.location.href.match(/puid\/([A-Fa-f0-9-]+)/);
+		var match = window.location.href.match(/artist\/[A-Fa-f0-9-]+\/recordings/);
 		if (match) {
-			updatePUIDPage(match[1]);
+			updateArtistRecordingsPage();
 		}
 		else {
-			var match = window.location.href.match(/artist\/[A-Fa-f0-9-]+\/recordings/);
+			var match = window.location.href.match(/release\/[A-Fa-f0-9-]+/);
 			if (match) {
-				updateArtistRecordingsPage();
-			}
-			else {
-				var match = window.location.href.match(/release\/[A-Fa-f0-9-]+/);
-				if (match) {
-					updateArtistRecordingsPage(); // works on the release page too
-				}
+				updateArtistRecordingsPage(); // works on the release page too
 			}
 		}
 	}

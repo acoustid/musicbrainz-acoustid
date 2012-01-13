@@ -1,14 +1,16 @@
 {
-  "name": "MusicBrainz/AcoustID integration",
+  "name": "Extra MusicBrainz/AcoustID integration",
   "version": "1.0",
-  "description": "Display AcoustID data on MusicBrainz",
+  "description": "Display additional AcoustID data on MusicBrainz",
   "content_scripts": [
     {
       "matches": [
-		"http://musicbrainz.org/recording/*/puids",
 		"http://musicbrainz.org/puid/*",
 		"http://musicbrainz.org/artist/*/recordings*",
-		"http://musicbrainz.org/release/*"
+		"http://musicbrainz.org/release/*",
+		"http://beta.musicbrainz.org/puid/*",
+		"http://beta.musicbrainz.org/artist/*/recordings*",
+		"http://beta.musicbrainz.org/release/*"
 	  ],
       "js": ["content.js"]
     }
