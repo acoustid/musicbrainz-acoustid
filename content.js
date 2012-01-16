@@ -116,7 +116,7 @@ function injected() {
 				}
 				if (has_acoustids[mbid]) {
 					var a = $('<a href="#"><img src="http://acoustid.org/static/acoustid-wave-12.png" alt="AcoustID" /></a>');
-					a.attr('href', 'http://musicbrainz.org/recording/' + mbid + '/puids');
+					a.attr('href', 'http://musicbrainz.org/recording/' + mbid + '/fingerprints');
 					a.css({'float': 'right'});
 					$(td).find('a:first').after(a);
 				}
